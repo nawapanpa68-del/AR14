@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>นักสร้างแผนภูมิ ป.4</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Kanit & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 50%, #fef3c7 100%);
+            min-height: 100vh;
+        }
+        .bouncy-btn {
+            transition: all 0.2s ease;
+        }
+        .bouncy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .bouncy-btn:active {
+            transform: translateY(1px);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-700 flex flex-col min-h-screen">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-sky-100">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-sky-200">
+                    <i class="fa-solid fa-chart-simple text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">นักสร้างแผนภูมิ ป.4</h1>
+                    <p class="text-xs text-slate-500">วิชาวิทยาการคำนวณ : การนำเสนอข้อมูล</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-sm">
+                    <i class="fa-solid fa-star text-amber-500"></i>
+                    <span id="score-display">คะแนน: 0 / 20</span>
+                </div>
+                <button onclick="resetGame()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-sm font-medium transition flex items-center space-x-1">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">เริ่มใหม่</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- WELCOME VIEW -->
+        <div id="view-welcome" class="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border border-sky-100 text-center max-w-2xl mx-auto w-full">
+            <div class="w-24 h-24 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner">
+                <i class="fa-solid fa-chart-column"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">ยินดีต้อนรับสู่ห้องเรียนข้อมูลสารสนเทศ!</h2>
+            <p class="text-slate-600 mb-8 leading-relaxed">
+                มาช่วยกันแปลงข้อมูลจากตารางให้กลายเป็น <span class="text-sky-600 font-semibold">"แผนภูมิแท่ง"</span> ที่เข้าใจง่าย สวยงาม และถูกต้องกันเถอะ! เด็กๆ จะได้ฝึกคิด วิเคราะห์ และเลือกวิธีนำเสนอข้อมูลที่เหมาะสมด้วยตนเอง
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 text-left">
+                <div class="bg-sky-50/70 p-4 rounded-2xl border border-sky-100 flex items-start space-x-3">
+                    <div class="bg-sky-500 text-white w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-bold mt-0.5">1</div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">อ่านและวิเคราะห์ตาราง</h3>
+                        <p class="text-xs text-slate-600">ศึกษาข้อมูลตัวอย่างที่กำหนดให้รอบคอบ</p>
+                    </div>
+                </div>
+                <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 flex items-start space-x-3">
+                    <div class="bg-emerald-500 text-white w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-bold mt-0.5">2</div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">สร้างแผนภูมิแท่ง</h3>
+                        <p class="text-xs text-slate-600">ตั้งชื่อและกำหนดแกน พร้อมใส่จำนวนให้ถูกต้อง</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="startMission(0)" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-sky-200 bouncy-btn text-lg flex items-center justify-center space-x-2 mx-auto">
+                <span>เริ่มทำภารกิจสร้างแผนภูมิ</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- GAME MISSION VIEW -->
+        <div id="view-game" class="hidden space-y-6">
+            
+            <!-- Progress Bar & Mission Header -->
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-sm border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <div id="mission-badge" class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg shadow-sm">
+                        1/2
+                    </div>
+                    <div>
+                        <span id="mission-subtitle" class="text-xs font-semibold text-sky-600 uppercase tracking-wider">ภารกิจที่ 1</span>
+                        <h2 id="mission-title" class="text-lg font-bold text-slate-800">ผลไม้ที่นักเรียนชั้น ป.4 ชื่นชอบ</h2>
+                    </div>
+                </div>
+                <div class="w-full sm:w-48 bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-full transition-all duration-500" style="width: 50%;"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Source Data Table -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-sky-100 flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 flex items-center space-x-2">
+                                <i class="fa-solid fa-table text-sky-500"></i>
+                                <span>ข้อมูลจากตาราง</span>
+                            </h3>
+                            <span class="text-xs bg-sky-50 text-sky-600 px-2.5 py-1 rounded-full font-medium">ข้อมูลดิบ</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-4">ศึกษากลุ่มข้อมูลด้านล่างนี้เพื่อนำไปสร้างแผนภูมิแท่งทางขวา</p>
+                        
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex-grow">
+                            <div id="source-table-title" class="text-center font-bold text-slate-700 mb-3 text-sm pb-2 border-b border-slate-200">
+                                ตารางแสดง...
+                            </div>
+                            <div class="space-y-2" id="source-data-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800 flex items-start space-x-3">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-base mt-0.5"></i>
+                            <div>
+                                <span class="font-semibold block mb-0.5">คำแนะนำสำหรับนักเรียน:</span>
+                                ตรวจสอบชื่อหมวดหมู่ (แกน X) และจำนวน (แกน Y) ให้ตรงกับตารางข้อมูลทุกประการก่อนกดส่งคำตอบ
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Interactive Chart Builder Form -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-sky-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 flex items-center space-x-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-indigo-500"></i>
+                                <span>เครื่องมือสร้างแผนภูมิแท่ง</span>
+                            </h3>
+                            <span class="text-xs bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full font-medium">โหมดออกแบบ</span>
+                        </div>
+
+                        <form id="chart-builder-form" onsubmit="event.preventDefault(); previewChart();" class="space-y-4">
+                            
+                            <!-- Chart Title Input -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">1. เลือกหรือตั้งชื่อแผนภูมิแท่งให้เหมาะสม</label>
+                                <select id="input-chart-title" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium" required>
+                                    <option value="">-- เลือกชื่อแผนภูมิที่เหมาะสม --</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+
+                            <!-- Axis Labels Input -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">2. ชื่อแกนอนนอน (แกน X)</label>
+                                    <input type="text" id="input-axis-x" placeholder="เช่น ชนิดของผลไม้" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">3. ชื่อแกนตั้ง (แกน Y)</label>
+                                    <input type="text" id="input-axis-y" placeholder="เช่น จำนวน (คน)" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" required>
+                                </div>
+                            </div>
+
+                            <!-- Data Category Value Inputs -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">4. กำหนดจำนวนข้อมูลในแต่ละหมวดหมู่ (แกน Y)</label>
+                                <p class="text-[11px] text-slate-400 mb-2">กรอกตัวเลขจำนวนคนหรือปริมาณให้ตรงกับข้อมูลในตาราง</p>
+                                <div id="category-inputs-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <div class="pt-2 flex items-center space-x-3">
+                                <button type="button" onclick="previewChart()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition flex items-center justify-center space-x-2 text-sm shadow-sm">
+                                    <i class="fa-solid fa-eye text-sky-500"></i>
+                                    <span>ดูตัวอย่างแผนภูมิ</span>
+                                </button>
+                                <button type="button" onclick="submitAnswer()" class="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl transition flex items-center justify-center space-x-2 text-sm shadow-md shadow-emerald-200">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>ส่งคำตอบ</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PREVIEW / RESULT MODAL / VIEW -->
+        <div id="view-result" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border border-sky-100 max-w-3xl mx-auto w-full text-center">
+            <div id="result-icon-container" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">
+                <!-- Icon injected dynamically -->
+            </div>
+            <h2 id="result-heading" class="text-2xl font-bold text-slate-800 mb-2">ผลการตรวจสอบคำตอบ</h2>
+            <p id="result-message" class="text-slate-600 mb-6 text-sm sm:text-base">เยี่ยมมาก! คุณสร้างแผนภูมิแท่งได้อย่างถูกต้องครบถ้วน</p>
+
+            <!-- Rendered Bar Chart Visualization Box -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-6 mb-6">
+                <h4 id="preview-chart-title" class="font-bold text-slate-800 text-base mb-1">ชื่อแผนภูมิแท่ง</h4>
+                <p id="preview-chart-subtitle" class="text-xs text-slate-500 mb-6">แสดงการเปรียบเทียบข้อมูล</p>
+
+                <!-- Custom Bar Chart Graphic Area -->
+                <div class="relative h-64 border-l-2 border-b-2 border-slate-400 mx-auto flex items-end justify-around px-2 sm:px-8 pt-8 pb-2" id="chart-canvas-container">
+                    <!-- Y Axis Label -->
+                    <div id="axis-y-label-display" class="absolute -left-10 top-0 text-[11px] font-semibold text-slate-500 -rotate-90 origin-bottom-left">จำนวน</div>
+                    <!-- Bars injected here -->
+                </div>
+                <!-- X Axis Label -->
+                <div id="axis-x-label-display" class="text-xs font-semibold text-slate-600 mt-3 text-center">ชนิดของข้อมูล</div>
+            </div>
+
+            <div class="flex items-center justify-center space-x-4">
+                <button id="btn-edit-again" onclick="backToEdit()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition flex items-center space-x-2 text-sm">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>แก้ไขข้อมูลอีกครั้ง</span>
+                </button>
+                <button id="btn-next-mission" onclick="nextMission()" class="px-8 py-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-sky-200 bouncy-btn text-sm flex items-center space-x-2">
+                    <span id="next-btn-text">ไปภารกิจถัดไป</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- COMPLETION SUMMARY VIEW -->
+        <div id="view-complete" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border border-emerald-100 max-w-2xl mx-auto w-full text-center">
+            <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner animate-bounce">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-slate-800 mb-3">ยินดีด้วย! คุณผ่านภารกิจทั้งหมดแล้ว</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed">
+                คุณมีความเข้าใจยอดเยี่ยมเกี่ยวกับการนำเสนอข้อมูลและการสร้างแผนภูมิแท่งสำหรับเปรียบเทียบข้อมูล ป.4!
+            </p>
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 mb-8 inline-block w-full max-w-md">
+                <span class="text-xs uppercase font-bold text-amber-600 tracking-wider">คะแนนรวมสุทธิ</span>
+                <div id="final-score" class="text-4xl font-extrabold text-amber-700 mt-1">20 / 20 คะแนน</div>
+                <div class="text-xs text-amber-600 mt-1">ระดับ: ผู้เชี่ยวชาญการนำเสนอข้อมูลระดับดาวรุ่ง! ⭐</div>
+            </div>
+            <div>
+                <button onclick="resetGame()" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 bouncy-btn text-base flex items-center justify-center space-x-2 mx-auto">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>เล่นใหม่อีกครั้ง</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-4 text-xs text-slate-400">
+        <p>สื่อการเรียนรู้วิชาวิทยาการคำนวณ ชั้นประถมศึกษาปีที่ 4 &copy; 2026</p>
+    </footer>
+
+    <!-- MESSAGE / NOTIFICATION MODAL -->
+    <div id="notification-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4 animate-scale-up">
+            <div id="modal-icon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <!-- Icon injected -->
+            </div>
+            <h3 id="modal-title" class="font-bold text-lg text-slate-800">แจ้งเตือน</h3>
+            <p id="modal-desc" class="text-sm text-slate-600">ข้อความแจ้งเตือน...</p>
+            <button onclick="closeModal()" class="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl transition shadow-md">
+                ตกลง
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mission Data Bank for Grade 4 Data Science / Visualization
+        const missions = [
+            {
+                id: 1,
+                title: "ผลไม้ที่นักเรียนชั้น ป.4 ชื่นชอบ",
+                subtitle: "ภารกิจที่ 1 : ข้อมูลผลไม้สุดโปรด",
+                tableTitle: "ตารางแสดงจำนวนนักเรียนที่ชอบผลไม้แต่ละชนิด",
+                correctTitleOptions: [
+                    "แผนภูมิแท่งแสดงผลไม้ที่นักเรียนชั้น ป.4 ชื่นชอบ",
+                    "แผนภูมิแท่งแสดงจำนวนสัตว์เลี้ยงของนักเรียน",
+                    "แผนภูมิแท่งแสดงวิชาโปรดของนักเรียนชั้น ป.4"
+                ],
+                correctTitleIndex: 0,
+                axisXName: "ชนิดของผลไม้",
+                axisYName: "จำนวน (คน)",
+                data: [
+                    { label: "แอปเปิล", value: 8 },
+                    { label: "กล้วย", value: 12 },
+                    { label: "ส้ม", value: 6 },
+                    { label: "แตงโม", value: 10 },
+                    { label: "มะม่วง", value: 14 }
+                ]
+            },
+            {
+                id: 2,
+                title: "สัตว์เลี้ยงแสนรักของนักเรียน ป.4",
+                subtitle: "ภารกิจที่ 2 : ข้อมูลสัตว์เลี้ยงยอดนิยม",
+                tableTitle: "ตารางแสดงจำนวนสัตว์เลี้ยงของนักเรียนชั้น ป.4",
+                correctTitleOptions: [
+                    "แผนภูมิแท่งแสดงจำนวนนักเรียนที่ไปเที่ยวสวนสัตว์",
+                    "แผนภูมิแท่งแสดงจำนวนสัตว์เลี้ยงแสนรักของนักเรียน ป.4",
+                    "แผนภูมิแท่งแสดงชนิดของผลไม้ที่ชอบ"
+                ],
+                correctTitleIndex: 1,
+                axisXName: "ชนิดของสัตว์เลี้ยง",
+                axisYName: "จำนวน (คน)",
+                data: [
+                    { label: "สุนัข", value: 15 },
+                    { label: "แมว", value: 12 },
+                    { label: "นก", value: 5 },
+                    { label: "ปลาทอง", value: 8 }
+                ]
+            }
+        ];
+
+        let currentMissionIndex = 0;
+        let totalScore = 0;
+
+        // Start specific mission
+        function startMission(index) {
+            currentMissionIndex = index;
+            const mission = missions[index];
+
+            // Update UI views
+            document.getElementById('view-welcome').classList.add('hidden');
+            document.getElementById('view-complete').classList.add('hidden');
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+
+            // Set Mission Header info
+            document.getElementById('mission-badge').innerText = `${index + 1}/${missions.length}`;
+            document.getElementById('mission-subtitle').innerText = mission.subtitle;
+            document.getElementById('mission-title').innerText = mission.title;
+            
+            // Progress bar update
+            const progressPct = ((index + 1) / missions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            // Populate source table list
+            document.getElementById('source-table-title').innerText = mission.tableTitle;
+            const sourceListEl = document.getElementById('source-data-list');
+            sourceListEl.innerHTML = '';
+            mission.data.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between items-center bg-white px-3 py-2 rounded-xl shadow-xs border border-slate-100 text-sm";
+                row.innerHTML = `<span class="font-medium text-slate-700">${item.label}</span> <span class="bg-sky-100 text-sky-700 font-bold px-2.5 py-0.5 rounded-lg text-xs">${item.value} คน</span>`;
+                sourceListEl.appendChild(row);
+            });
+
+            // Populate Title Dropdown Options (shuffled or ordered)
+            const titleSelect = document.getElementById('input-chart-title');
+            titleSelect.innerHTML = '<option value="">-- เลือกชื่อแผนภูมิที่เหมาะสม --</option>';
+            mission.correctTitleOptions.forEach((opt, optIdx) => {
+                const optEl = document.createElement('option');
+                optEl.value = optIdx;
+                optEl.innerText = opt;
+                titleSelect.appendChild(optEl);
+            });
+
+            // Reset form fields
+            document.getElementById('input-axis-x').value = '';
+            document.getElementById('input-axis-y').value = '';
+
+            // Populate category value number inputs
+            const catContainer = document.getElementById('category-inputs-container');
+            catContainer.innerHTML = '';
+            mission.data.forEach((item, i) => {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = "flex items-center space-x-2 bg-slate-50 p-2 rounded-xl border border-slate-100";
+                inputGroup.innerHTML = `
+                    <span class="text-xs font-semibold text-slate-700 w-28 truncate" title="${item.label}">${item.label}:</span>
+                    <input type="number" min="0" max="100" placeholder="ระบุจำนวน" data-index="${i}" class="cat-value-input flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
+                    <span class="text-xs text-slate-400">คน</span>
+                `;
+                catContainer.appendChild(inputGroup);
+            });
+        }
+
+        // Preview Chart Function
+        function previewChart() {
+            const mission = missions[currentMissionIndex];
+            const titleSelectVal = document.getElementById('input-chart-title').value;
+            const axisXVal = document.getElementById('input-axis-x').value.trim();
+            const axisYVal = document.getElementById('input-axis-y').value.trim();
+
+            if (titleSelectVal === "") {
+                showModal("กรุณาเลือกชื่อแผนภูมิแท่งก่อนดูตัวอย่าง", "fa-triangle-exclamation", "text-amber-500", "bg-amber-50");
+                return;
+            }
+            if (!axisXVal || !axisYVal) {
+                showModal("กรุณากรอกชื่อแกน X และแกน Y ให้ครบถ้วน", "fa-triangle-exclamation", "text-amber-500", "bg-amber-50");
+                return;
+            }
+
+            // Gather inputs
+            const inputs = document.querySelectorAll('.cat-value-input');
+            let userValues = [];
+            let isValid = true;
+            inputs.forEach(input => {
+                const val = parseInt(input.value);
+                if (isNaN(val)) {
+                    isValid = false;
+                }
+                userValues.push(isNaN(val) ? 0 : val);
+            });
+
+            if (!isValid) {
+                showModal("กรุณากรอกตัวเลขจำนวนให้ครบทุกหมวดหมู่", "fa-triangle-exclamation", "text-amber-500", "bg-amber-50");
+                return;
+            }
+
+            // Render Preview Inside Result/Preview View temporarily or directly
+            renderBarChartModal(titleSelectVal, axisXVal, axisYVal, mission.data, userValues, false);
+        }
+
+        // Submit Answer and Validate
+        function submitAnswer() {
+            const mission = missions[currentMissionIndex];
+            const titleSelectVal = document.getElementById('input-chart-title').value;
+            const axisXVal = document.getElementById('input-axis-x').value.trim();
+            const axisYVal = document.getElementById('input-axis-y').value.trim();
+
+            if (titleSelectVal === "" || !axisXVal || !axisYVal) {
+                showModal("กรุณากรอกข้อมูลและเลือกชื่อแผนภูมิให้ครบถ้วนก่อนส่งคำตอบ", "fa-triangle-exclamation", "text-amber-500", "bg-amber-50");
+                return;
+            }
+
+            const inputs = document.querySelectorAll('.cat-value-input');
+            let userValues = [];
+            inputs.forEach(input => {
+                userValues.push(parseInt(input.value) || 0);
+            });
+
+            // Check correctness
+            const isTitleCorrect = parseInt(titleSelectVal) === mission.correctTitleIndex;
+            let isDataCorrect = true;
+            mission.data.forEach((item, idx) => {
+                if (item.value !== userValues[idx]) {
+                    isDataCorrect = false;
+                }
+            });
+
+            const isAxisCorrect = axisXValueCheck(axisXVal) && axisYValueCheck(axisYVal);
+
+            const isAllCorrect = isTitleCorrect && isDataCorrect;
+
+            // Switch to result display
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-result').classList.remove('hidden');
+
+            const iconContainer = document.getElementById('result-icon-container');
+            const headingEl = document.getElementById('result-heading');
+            const msgEl = document.getElementById('result-message');
+            const nextBtn = document.getElementById('btn-next-mission');
+
+            if (isAllCorrect) {
+                iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md bg-emerald-100 text-emerald-600";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                headingEl.innerText = "ยอดเยี่ยม! ถูกต้องสมบูรณ์";
+                msgEl.innerText = "คุณเลือกชื่อแผนภูมิและกำหนดข้อมูลในแกนได้อย่างถูกต้องแม่นยำ รับไปเลย 10 คะแนนเต็ม!";
+                
+                // Add score if not already counted for this mission
+                totalScore = (currentMissionIndex + 1) * 10;
+                document.getElementById('score-display').innerText = `คะแนน: ${totalScore} / 20`;
+
+                if (currentMissionIndex < missions.length - 1) {
+                    nextBtn.innerHTML = `<span>ไปภารกิจถัดไป</span> <i class="fa-solid fa-arrow-right"></i>`;
+                    nextBtn.onclick = () => startMission(currentMissionIndex + 1);
+                } else {
+                    nextBtn.innerHTML = `<span>ดูคะแนนรวม</span> <i class="fa-solid fa-flag-checkered"></i>`;
+                    nextBtn.onclick = showCompleteView;
+                }
+            } else {
+                iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md bg-rose-100 text-rose-600";
+                iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                headingEl.innerText = "เกือบถูกต้องแล้ว!";
+                let errReason = "ข้อมูลในแผนภูมิหรือชื่อแผนภูมิบางรายการยังไม่ตรงกับตารางข้อมูลต้นฉบับ ลองตรวจสอบดูอีกครั้งนะ";
+                if (!isTitleCorrect) errReason = "ชื่อแผนภูมิยังไม่ถูกต้อง ลองเลือกชื่อที่สื่อความหมายตรงกับตารางข้อมูลที่สุด";
+                else if (!isDataCorrect) errReason = "จำนวนข้อมูลในแต่ละแท่งยังไม่ตรงกับตัวเลขในตารางข้อมูล";
+                
+                msgEl.innerText = errReason;
+                nextBtn.innerHTML = `<span>แก้ไขคำตอบ</span> <i class="fa-solid fa-pen"></i>`;
+                nextBtn.onclick = backToEdit;
+            }
+
+            renderBarChartModal(titleSelectVal, axisXVal, axisYVal, mission.data, userValues, true);
+        }
+
+        // Helper check for axis keywords
+        function axisXValueCheck(val) {
+            return val.length > 0;
+        }
+        function axisYValueCheck(val) {
+            return val.length > 0;
+        }
+
+        // Render Bar Chart Graph visually
+        function renderBarChartModal(titleIdx, axisX, axisY, originalData, userValues, isResultMode) {
+            const mission = missions[currentMissionIndex];
+            const chartTitleText = mission.correctTitleOptions[titleIdx] || "แผนภูมิแท่งเปรียบเทียบข้อมูล";
+            
+            document.getElementById('preview-chart-title').innerText = chartTitleText;
+            document.getElementById('preview-chart-subtitle').innerText = `เปรียบเทียบระหว่าง ${axisX} และ ${axisY}`;
+            document.getElementById('axis-y-label-display').innerText = axisY;
+            document.getElementById('axis-x-label-display').innerText = axisX;
+
+            const canvasContainer = document.getElementById('chart-canvas-container');
+            // Keep Y label
+            const yLabelEl = document.getElementById('axis-y-label-display');
+            canvasContainer.innerHTML = '';
+            canvasContainer.appendChild(yLabelEl);
+
+            // Find max value for bar scaling
+            const maxVal = Math.max(...userValues, 15);
+
+            userValues.forEach((val, idx) => {
+                const categoryName = originalData[idx].label;
+                const heightPercent = Math.min(Math.max((val / maxVal) * 100, 10), 100);
+                
+                // Color palette
+                const colors = [
+                    'from-sky-400 to-sky-600',
+                    'from-indigo-400 to-indigo-600',
+                    'from-emerald-400 to-emerald-600',
+                    'from-amber-400 to-amber-600',
+                    'from-rose-400 to-rose-600'
+                ];
+                const colorClass = colors[idx % colors.length];
+
+                const barCol = document.createElement('div');
+                barCol.className = "flex flex-col items-center h-full justify-end group relative mx-1 sm:mx-2 flex-1";
+                barCol.innerHTML = `
+                    <span class="text-[10px] font-bold text-slate-600 mb-1">${val}</span>
+                    <div class="w-full max-w-[40px] bg-gradient-to-t ${colorClass} rounded-t-lg transition-all duration-500 shadow-sm" style="height: ${heightPercent}%;"></div>
+                    <span class="text-[11px] font-medium text-slate-700 mt-2 truncate w-full text-center" title="${categoryName}">${categoryName}</span>
+                `;
+                canvasContainer.appendChild(barCol);
+            });
+
+            if (!isResultMode) {
+                // If called from Preview button, show temporary modal or scroll to preview
+                showModal("สร้างตัวอย่างแผนภูมิแท่งสำเร็จแล้ว! สามารถกดปุ่ม 'ส่งคำตอบ' ได้เลยหากมั่นใจ", "fa-chart-simple", "text-sky-500", "bg-sky-50");
+            }
+        }
+
+        // Back to Edit view
+        function backToEdit() {
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+        }
+
+        // Show Final Completion Summary
+        function showCompleteView() {
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-complete').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${totalScore} / 20 คะแนน`;
+        }
+
+        // Reset Game
+        function resetGame() {
+            currentMissionIndex = 0;
+            totalScore = 0;
+            document.getElementById('score-display').innerText = `คะแนน: 0 / 20`;
+            document.getElementById('view-complete').classList.add('hidden');
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-welcome').classList.remove('hidden');
+        }
+
+        // Modal Helper
+        function showModal(desc, iconClass, iconColorClass, iconBgClass) {
+            const modal = document.getElementById('notification-modal');
+            const iconEl = document.getElementById('modal-icon');
+            const descEl = document.getElementById('modal-desc');
+
+            iconEl.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl ${iconBgClass} ${iconColorClass}`;
+            iconEl.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            descEl.innerText = desc;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('notification-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
